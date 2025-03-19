@@ -195,7 +195,7 @@ async def construct_server_service_instance_e2e(
             lambda: UDPSomeipEndpoint(), sock=rcv_socket
         )
 
-        server_instance = ServerServiceInstance(
+        server_instance = ServerServiceInstancee2e(
             service,
             instance_id,
             endpoint,
@@ -226,7 +226,7 @@ async def construct_server_service_instance_e2e(
 
         tcp_someip_endpoint = TCPSomeipEndpoint(server, tcp_client_manager)
 
-        server_instance = ServerServiceInstance(
+        server_instance = ServerServiceInstancee2e(
             service,
             instance_id,
             endpoint,
