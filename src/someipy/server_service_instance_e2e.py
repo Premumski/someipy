@@ -90,14 +90,14 @@ class ServerServiceInstancee2e(ServerServiceInstance):
         # Return the E2E header for the event
         return self._e2e_headers[key]   
 
-    def update_e2e_header(self, event_group_id: int, event_id: int, e2e_profil: int, e2e_header: bytes):
+    def update_e2e_header(self, event_group_id: int, event_id: int, e2e_header: bytes):
         # Create a unique key for the event group and event ID
         key = (event_group_id, event_id)
 
         # Update the E2E header for the event
         self._e2e_headers[key] = e2e_header
         get_logger(_logger_name).debug(
-            f"Updated E2E header for event group {event_group_id}, event {event_id} with profile {e2e_profil}"
+            f"Updated E2E header for event group {event_group_id}, event {event_id} "
         )
 
     def send_event_e2e(self, event_group_id: int, event_id: int, e2e_profil: int, data_id: int = 0, payload: bytes = bytes([0x00])) -> None:
@@ -141,9 +141,12 @@ class ServerServiceInstancee2e(ServerServiceInstance):
             interface_version=self._service.major_version,
             message_type=MessageType.NOTIFICATION.value,
             return_code=0x00,
-        )       
+        ) 
 
-        
+        data = bytearray(someip_header.to_buffer()[8:] + self.last_event_e2e_header(event_group_id, event_id, e2e_profil) + payload)
+        e2e.p06.e2e_p06_protect(data,len(data) - 2, data_id, offset = 8 , increment_counter = True)
+        payload = bytes(data[8:])
+        self.update_e2e_header(event_group_id, event_id, data[8:13])      
         
 
         for sub in self._subscribers.subscribers:
