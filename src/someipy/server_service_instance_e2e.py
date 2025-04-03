@@ -133,7 +133,7 @@ class ServerServiceInstancee2e(ServerServiceInstance):
 
         someip_header = SomeIpHeader(
             service_id=self._service.id,
-            method_id=event_id,
+            method_id=event_id + 32768,
             length=length,
             client_id=0x00,
             session_id=self._session_id,
